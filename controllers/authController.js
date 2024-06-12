@@ -131,3 +131,76 @@ exports.verify2FA = async (req, res) => {
     res.status(400).json({ msg: 'Invalid 2FA token' });
   }
 };
+
+// reset password 
+
+dotenv.config();
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Generate reset token
+    const token = jwtUtils.signToken({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // Prepare password reset email
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Password Reset Request',
+      text: `Please click the following link to reset your password: ${process.env.BASE_URL}/reset-password/${token}`
+    };
+
+    // Send password reset email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).json({ error: 'Failed to send password reset email' });
+      }
+      res.json({ message: 'Password reset email sent' });
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    // Verify reset token
+    const decoded = jwtUtils.verifyToken(token, process.env.JWT_SECRET);
+
+    // Find user by decoded ID
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    // Save updated password
+    await user.save();
+
+    res.json({ message: 'Password reset successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};

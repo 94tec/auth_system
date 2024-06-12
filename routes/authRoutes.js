@@ -13,6 +13,12 @@ router.get('/logout', authController.logout);
 router.post('/2fa/setup', ensureAuthenticated, authController.setup2FA);
 router.post('/2fa/verify', ensureAuthenticated, authController.verify2FA);
 
+// Route for requesting password reset
+router.post('/forgot-password', authController.forgotPassword);
+
+// Route for resetting password
+router.post('/reset-password', authController.resetPassword);
+
 // Google OAuth
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
 
