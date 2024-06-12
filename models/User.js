@@ -25,6 +25,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  isConfirmed: {
+    type: Boolean,
+    default: false // Default value set to false
+  },
   image: {
     type: String
   },

@@ -18,15 +18,15 @@ exports.register = async (req, res) => {
       return res.status(400).json({ errors: [{ msg: 'Email is already registered' }] });
     }
 
-    // Generate the JWT token
-    const token = jwtUtils.signToken({ user: { id: new User().id } }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // Generate a unique confirmation token
+    const token = jwtUtils.signToken({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    // Prepare to send the confirmation email
+    // Prepare the confirmation email
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'fixtone94tec@gmail.com',
-        pass: 'dgsawqvqcjkobbxw'
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
       }
     });
 
@@ -37,17 +37,18 @@ exports.register = async (req, res) => {
       text: `Please confirm your account by clicking the following link: ${process.env.BASE_URL}/confirm/${token}`
     };
 
-    // Attempt to send the email before saving the user
+    // Send the confirmation email
     transporter.sendMail(mailOptions, async (error, info) => {
       if (error) {
         return res.status(500).json({ errors: [{ msg: 'Failed to send confirmation email', error }] });
       }
 
-      // If email sent successfully, proceed to save the user
+      // Save the user to the database with inactive status
       user = new User({
         name,
         email,
-        password
+        password,
+        isConfirmed: false // Add a field to indicate if the email is confirmed
       });
 
       const salt = await bcrypt.genSalt(10);
@@ -64,14 +65,20 @@ exports.register = async (req, res) => {
 };
 
 exports.confirmEmail = async (req, res) => {
+  const { token } = req.params;
+
   try {
-    const decoded = jwtUtils.verifyToken(req.params.token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.user.id);
+    // Verify the confirmation token
+    const decoded = jwtUtils.verifyToken(token, process.env.JWT_SECRET);
+    const { email } = decoded;
+
+    // Find the user by email and update confirmation status
+    const user = await User.findOneAndUpdate({ email }, { isConfirmed: true });
+
     if (!user) {
       return res.status(400).json({ msg: 'Invalid token' });
     }
-    user.isConfirmed = true;
-    await user.save();
+
     res.json({ msg: 'Email confirmed successfully' });
   } catch (err) {
     console.error(err.message);
@@ -92,7 +99,7 @@ exports.login = (req, res, next) => {
         return res.status(500).send('Server Error');
       }
       const token = jwtUtils.signToken({ user: { id: user.id } }, process.env.JWT_SECRET, { expiresIn: 3600 });
-      res.json({ token });
+      res.status(200).json({ token, user, status: 'Logged  in Success' })
     });
   })(req, res, next);
 };
