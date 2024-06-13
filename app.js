@@ -3,7 +3,16 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
+
+// If you want to restrict the origins
+// app.use(cors({
+//   origin: 'http://localhost:3000', // Your frontend URL
+// }));
+
+// Use the cors middleware
+app.use(cors());
 
 require('dotenv').config();
 // Passport Config
@@ -42,4 +51,4 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use('/', require('./routes/authRoutes'));
+app.use('/auth', require('./routes/authRoutes'));

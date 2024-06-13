@@ -10,7 +10,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, comfirmPassword } = req.body;
 
   try {
     let user = await User.findOne({ email });
