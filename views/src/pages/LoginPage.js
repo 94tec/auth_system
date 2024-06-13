@@ -1,4 +1,3 @@
-// src/pages/LoginPage.js
 import React, { useState } from 'react';
 import AuthForm from '../components/AuthForm';
 import '../App.css';
@@ -6,17 +5,25 @@ import '../App.css';
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
 
-  const toggleForm = () => {
-    setIsLogin(!isLogin);
-  };
-
   return (
     <div className="hero">
       <div className="form-box">
         <div className="button-box">
-          <div id="btn" className={isLogin ? "btn-login" : "btn-register"}></div>
-          <button type="button" className="toggle-btn" onClick={toggleForm}>Login</button>
-          <button type="button" className="toggle-btn" onClick={toggleForm}>Register</button>
+          <div id="btn" className={isLogin ? "left" : "right"}></div>
+          <button 
+            type="button" 
+            className={`toggle-btn ${isLogin ? "active" : ""}`} 
+            onClick={() => setIsLogin(true)}
+          >
+            Login
+          </button>
+          <button 
+            type="button" 
+            className={`toggle-btn ${!isLogin ? "active" : ""}`} 
+            onClick={() => setIsLogin(false)}
+          >
+            Register
+          </button>
         </div>
         <AuthForm isLogin={isLogin} />
       </div>

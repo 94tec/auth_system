@@ -1,5 +1,6 @@
 // src/components/AuthForm.js
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { loginSuccess } from '../store';
@@ -33,7 +34,10 @@ const AuthForm = ({ isLogin }) => {
 
   return (
     <form className="input-group" onSubmit={handleSubmit}>
+      <h1 className="form-heading">{isLogin ? 'Enter Credentials to Login' : 'Register an Account'}</h1>
       {!isLogin && (
+      <div className="input-wrapper">
+        <i className="fas fa-user icon"></i>
         <input
           type="text"
           className="input-field"
@@ -42,7 +46,10 @@ const AuthForm = ({ isLogin }) => {
           onChange={(e) => setName(e.target.value)}
           required
         />
-      )}
+    </div>
+  )}
+    <div className="input-wrapper">
+      <i className="fas fa-envelope icon"></i>
       <input
         type="email"
         className="input-field"
@@ -51,6 +58,9 @@ const AuthForm = ({ isLogin }) => {
         onChange={(e) => setEmail(e.target.value)}
         required
       />
+    </div>
+    <div className="input-wrapper">
+      <i className="fas fa-lock icon"></i>
       <input
         type="password"
         className="input-field"
@@ -59,16 +69,23 @@ const AuthForm = ({ isLogin }) => {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
+    </div>
       {isLogin ? (
-        <>
-          <input type="checkbox" className="check-box" /><span>Remember Password</span>
+        <div className= 'loginRememberPasswordCheck'>
+          <div className='rememberPasswordGroup'>
+            <input type="checkbox" className="check-box" />
+            <span>Remember Password</span>
+          </div>
           <button type="submit" className="submit-btn">Login</button>
-        </>
+          <div><Link to="/forgot-password" className='linkPassword'>Forgot Password ?</Link></div>
+        </div>
       ) : (
-        <>
-          <input type="checkbox" className="check-box" /><span>I agree to the terms and conditions</span>
+        <div className='termsCheck'>
+          <div className='termsCheckGroup'>
+            <input type="checkbox" className="check-box" /><span>I agree to the terms and conditions</span>
+          </div>
           <button type="submit" className="submit-btn">Sign Up</button>
-        </>
+        </div>
       )}
     </form>
   );
