@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
-import { loginSuccess } from '../store';
+import logo from '../static/carZola.png';
+import { loginSuccess, setMessageWithTimeout  } from '../store';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from React Router
 import '../App.css';
 
 const AuthForm = ({ isLogin }) => {
@@ -12,37 +14,51 @@ const AuthForm = ({ isLogin }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize navigate hook
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isLogin) {
       try {
         const response = await axios.post('http://localhost:5000/auth/login', { email, password });
+        const user = response.data.user;
         localStorage.setItem('token', response.data.token);
         dispatch(loginSuccess(response.data.user));
-        console.log(response.data.user);
+        dispatch(setMessageWithTimeout({ content: 'User Logged in Successfully!', type: 'success' }));
+        console.log('User Logged in Successfully', user);
+       
       } catch (err) {
-        console.error(err);
+        dispatch(setMessageWithTimeout({ content: 'Login Failed. Please try again.', type: 'error' }));
       }
     } else {
       if (password !== confirmPassword) {
-        alert('Passwords do not match');
+        dispatch(setMessageWithTimeout({ content: 'Passwords do not match', type: 'error' }));
         return;
       }
       try {
-        await axios.post('http://localhost:5000/auth/register', { name, email, password });
-        alert('Registration successful! Please log in.');
+        await axios.post('http://localhost:5000/auth/register', { name, email, password, confirmPassword });
+        dispatch(setMessageWithTimeout({ content: 'Registration successful! Please log in.', type: 'success' }));
+        console.log('Registration successful! Please activate your account' , email);
+        // Clear form fields
+        setName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        // Navigate to login page
+        navigate('/login');
       } catch (err) {
-        console.error(err);
+        dispatch(setMessageWithTimeout({ content: err, type: 'error' }));
       }
     }
   };
 
   return (
     <form className="input-group" onSubmit={handleSubmit}>
+      <img src={logo} alt="Logo" className="form-logo" />
       <h1 className="form-heading">{isLogin ? 'Enter Credentials to Login' : 'Register an Account'}</h1>
       {!isLogin && (
         <div className="input-wrapper">
+          <label htmlFor="email" className="input-label">Full name</label>
           <i className="fas fa-user icon"></i>
           <input
             type="text"
@@ -55,6 +71,7 @@ const AuthForm = ({ isLogin }) => {
         </div>
       )}
       <div className="input-wrapper">
+        <label htmlFor="email" className="input-label">Email ID</label>
         <i className="fas fa-envelope icon"></i>
         <input
           type="email"
@@ -66,6 +83,7 @@ const AuthForm = ({ isLogin }) => {
         />
       </div>
       <div className="input-wrapper">
+        <label htmlFor="email" className="input-label">Password</label>
         <i className="fas fa-lock icon"></i>
         <input
           type="password"
@@ -78,6 +96,7 @@ const AuthForm = ({ isLogin }) => {
       </div>
       {!isLogin && (
         <div className="input-wrapper">
+          <label htmlFor="email" className="input-label">Confirm Password</label>
           <i className="fas fa-lock icon"></i>
           <input
             type="password"

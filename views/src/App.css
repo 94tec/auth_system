@@ -1,13 +1,16 @@
+/* Global reset and box-sizing */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Root variable for button color */
 :root {
   --btnColor: #4CAF50;
 }
 
+/* Hero section styling */
 .hero {
   display: flex;
   justify-content: center;
@@ -15,10 +18,9 @@
   height: 100vh; /* Full viewport height to center vertically */
   background-color: #061d33; /* Optional for better visual */
 }
-
 .form-box {
   width: 500px;
-  height: 480px;
+  height: auto;  
   position: relative;
   background: linear-gradient(to right, #072a46, #346fa5);
   border-radius: 0.4rem;
@@ -29,16 +31,37 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+  color: #E0F2FF;
 }
 
+/* Styling for the form logo */
+.form-logo {
+  display: block;
+  margin: 0 auto 20px auto; /* Center the logo and add some margin below */
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+/* Form heading */
 .form-heading {
   text-align: center;
   margin-bottom: 20px;
-  font-size: 20px;
+  font-size: 22px;
   color: #111;
-  font-weight: 700;
+  font-weight: 800;
+  font-family: 'Montserrat';
+}
+.message {
+  margin-top: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  color: #333;
+  text-align: center;
 }
 
+/* Button box styling */
 .button-box {
   width: 220px;
   margin: 20px auto;
@@ -49,6 +72,7 @@
   justify-content: space-between;
 }
 
+/* Toggle button styling */
 .toggle-btn {
   padding: 10px 30px;
   cursor: pointer;
@@ -61,6 +85,7 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
+/* Toggle button slider */
 #btn {
   top: 0;
   position: absolute;
@@ -72,101 +97,241 @@
 }
 
 #btn.left {
-  left: 0;
+  left: 0
 }
-
-#btn.right {
-  left: 110px;
-}
-
-.input-group {
-  width: 100%;
-  padding: 5px; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.input-wrapper {
-  width: 100%;
-  position: relative;
-  margin-bottom: 15px;
-}
-
-.input-field {
-  width: 100%;
-  padding: 10px 10px 10px 40px; /* Adjust padding to make room for the icon */
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background: transparent;
-}
-
-.icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #999;
-}
-
-.input-field:focus {
-  border-color: #4CAF50;
-  outline: none;
-}
-
-.input-wrapper .input-field:focus + .icon {
-  color: #4CAF50;
-}
-
-.loginRememberPasswordCheck, .termsCheck {
-  width: 100%;
-  transition: 0.5s;
-  padding: 5px; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.termsCheckGroup, .rememberPasswordGroup {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-}
-
-.submit-btn {
-  width: 80%;
-  padding: 10px 30px;
-  cursor: pointer;
-  display: block;
-  margin: auto;
-  background: linear-gradient(to right, #4CAF50, #5a965c);
-  border: 0;
-  outline: none;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: 700;
-}
-.submit-btn:hover {
-  opacity: .7;
-}
-
-.rememberPasswordGroup span, .termsCheckGroup span {
-  font-size: 16px;
-  font-weight: 500;
-  color: #E0F2FF;
-}
-
-.linkPassword {
-  font-size: 16px;
-  color: #E0F2FF;
-}
-
-.linkPassword:hover {
-  transform: scale(1.2);
-  color: #f31111;
-}
+  #btn.right {
+    left: 110px;
+  }
+  
+  /* Input group styling */
+  .input-group {
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  /* Input wrapper styling */
+  .input-wrapper {
+    width: 100%;
+    position: relative;
+    margin-bottom: 15px;
+  }
+  /* Styling for input label */
+  .input-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #E0F2FF;
+    margin-bottom: 5px;
+  }
+  /* Input field styling */
+  .input-field {
+    width: 100%;
+    padding: 10px 10px 10px 40px; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: transparent;
+  }
+  
+  /* Icon styling */
+  .icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(40%);
+    color: #999;
+  }
+  
+  /* Focused input field and icon styling */
+  .input-field:focus {
+    border-color: #4CAF50;
+    outline: none;
+  }
+  
+  .input-wrapper .input-field:focus + .icon {
+    color: #4CAF50;
+  }
+  
+  /* Checkbox groups styling */
+  .loginRememberPasswordCheck, .termsCheck {
+    width: 100%;
+    transition: 0.5s;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .termsCheckGroup, .rememberPasswordGroup {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* Submit button styling */
+  .submit-btn {
+    width: 100%;
+    padding: 10px 30px;
+    cursor: pointer;
+    display: block;
+    margin: auto;
+    background: linear-gradient(to right, #4CAF50, #5a965c);
+    border: 0;
+    outline: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  
+  .submit-btn:hover {
+    opacity: .7;
+  }
+  
+  /* Text styling within checkbox groups */
+  .rememberPasswordGroup span, .termsCheckGroup span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #E0F2FF;
+  }
+  
+  /* Password link styling */
+  .linkPassword {
+    font-size: 16px;
+    color: #E0F2FF;
+  }
+  
+  .linkPassword:hover {
+    transform: scale(1.2);
+    color: #4CAF50;
+  }
+  
+  /* Reset password instructions styling */
+  .instructions {
+    margin-bottom: 40px;
+    font-weight: 700;
+    color: #E0F2FF;
+  }
+  
+  /* Bottom link styling */
+  .bottom-link {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+  
+  .login-btn-link {
+    color: #4CAF50;
+    font-size: 18px;
+  }
+  
+  /* Forgot password heading */
+  .form-heading-forgot-password {
+    margin-bottom: 20px;
+    font-family: 'Montserrat';
+    font-size: 22px;
+  }
+  
+  /* Media queries for responsiveness */
+  @media (max-width: 768px) {
+    .form-box {
+      width: 90%;
+      height: auto;
+      padding: 10px;
+    }
+  
+    .button-box {
+      width: 100%;
+    }
+  
+    .toggle-btn {
+      padding: 10px;
+    }
+  
+    .input-group {
+      width: 100%;
+      padding: 0;
+    }
+  
+    .input-field {
+      padding: 10px 10px 10px 30px;
+    }
+  
+    .submit-btn {
+      width: 100%;
+      padding: 10px;
+    }
+  
+    .rememberPasswordGroup span, .termsCheckGroup span {
+      font-size: 14px;
+    }
+  
+    .linkPassword {
+      font-size: 14px;
+    }
+  
+    .login-btn-link {
+      font-size: 16px;
+    }
+  
+    .form-heading, .form-heading-forgot-password {
+      font-size: 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .form-box {
+      width: 100%;
+      padding: 10px;
+    }
+  
+    .button-box {
+      width: 100%;
+    }
+  
+    .toggle-btn {
+      padding: 10px 5px;
+      font-size: 14px;
+    }
+  
+    .input-group {
+      width: 100%;
+      padding: 0;
+    }
+  
+    .input-field {
+      padding: 10px;
+    }
+  
+    .submit-btn {
+      width: 100%;
+      padding: 8px;
+    }
+  
+    .rememberPasswordGroup span, .termsCheckGroup span {
+      font-size: 12px;
+    }
+  
+    .linkPassword {
+      font-size: 12px;
+    }
+  
+    .login-btn-link {
+      font-size: 14px;
+    }
+  
+    .form-heading, .form-heading-forgot-password {
+      font-size: 18px;
+    }
+  }
+  

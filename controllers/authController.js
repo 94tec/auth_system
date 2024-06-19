@@ -10,9 +10,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 exports.register = async (req, res) => {
-  const { name, email, password, comfirmPassword } = req.body;
+  const { name, email, password } = req.body;
 
   try {
+    // Check if the email is already registered
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ errors: [{ msg: 'Email is already registered' }] });
@@ -40,27 +41,30 @@ exports.register = async (req, res) => {
     // Send the confirmation email
     transporter.sendMail(mailOptions, async (error, info) => {
       if (error) {
-        return res.status(500).json({ errors: [{ msg: 'Failed to send confirmation email', error }] });
+        console.error('Failed to send confirmation email:', error);
+        return res.status(500).json({ errors: [{ msg: 'Failed to send confirmation email' }] });
       }
 
       // Save the user to the database with inactive status
       user = new User({
         name,
         email,
-        password,
-        isConfirmed: false // Add a field to indicate if the email is confirmed
+        password: '', // Empty password for now, will be hashed in the next step
+        isConfirmed: false // Assuming you have a field to track email confirmation status
       });
 
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
+
       await user.save();
 
-      res.status(200).send('Confirmation email sent.');
+      // Respond with a success message after email is sent and user is saved
+      res.status(200).json({ message: 'Confirmation email sent. Please check your email to activate your account.' });
     });
 
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Registration error:', err);
+    res.status(500).json({ errors: [{ msg: 'Server Error' }] });
   }
 };
 

@@ -1,0 +1,45 @@
+/* src/components/MailOptions.css */
+.container {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    line-height: 1.6;
+    max-width: 600px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+.form-logo {
+    display: block;
+    margin: 0 auto 20px auto; /* Center the logo and add some margin below */
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .mail-options div {
+    margin-bottom: 10px;
+  }
+  
+  .label {
+    font-weight: bold;
+  }
+  
+  .value {
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+  }
+  
+  a {
+    color: #007BFF;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  

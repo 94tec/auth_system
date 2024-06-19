@@ -4,8 +4,8 @@ exports.registerValidation = [
   check('name', 'Name is required').not().isEmpty(),
   check('email', 'Please include a valid email').isEmail(),
   check('password', 'Password must be at least 6 characters long').isLength({ min: 6 }),
-  check('password2', 'Confirm password is required').not().isEmpty(),
-  check('password2', 'Passwords do not match').custom((value, { req }) => value === req.body.password)
+  check('confirmPassword', 'Confirm password is required').not().isEmpty(),
+  check('confirmPassword', 'Passwords do not match').custom((value, { req }) => value === req.body.password)
 ];
 
 exports.loginValidation = [

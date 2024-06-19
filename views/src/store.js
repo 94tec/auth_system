@@ -1,7 +1,6 @@
-// src/store.js
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import { configureStore, createSlice, combineReducers } from '@reduxjs/toolkit';
 
+// Auth slice
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -22,10 +21,43 @@ const authSlice = createSlice({
 
 export const { loginSuccess, logoutSuccess } = authSlice.actions;
 
-const rootReducer = combineReducers({
-  auth: authSlice.reducer,
+// Message slice
+const messageSlice = createSlice({
+  name: 'message',
+  initialState: {
+    content: '',
+    type: '',
+  },
+  reducers: {
+    setMessage(state, action) {
+      state.content = action.payload.content;
+      state.type = action.payload.type;
+    },
+    clearMessage(state) {
+      state.content = '';
+      state.type = '';
+    },
+  },
 });
 
+export const { setMessage, clearMessage } = messageSlice.actions;
+// Async action to clear message after a delay
+export const setMessageWithTimeout = (message, timeout = 9000) => (dispatch) => {
+  dispatch(setMessage(message));
+
+  setTimeout(() => {
+    dispatch(clearMessage());
+  }, timeout);
+};
+
+
+// Combine reducers
+const rootReducer = combineReducers({
+  auth: authSlice.reducer,
+  message: messageSlice.reducer, // Use messageSlice.reducer instead of messageSlice itself
+});
+
+// Configure store
 const store = configureStore({
   reducer: rootReducer,
 });
