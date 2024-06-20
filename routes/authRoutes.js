@@ -1,14 +1,13 @@
 const express = require('express');
 const passport = require('passport');
 const authController = require('../controllers/authController');
-const { registerValidation, loginValidation, validateFields } = require('../validators/authValidators');
 const { ensureAuthenticated } = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.post('/register', registerValidation, validateFields, authController.register);
+router.post('/register', authController.register);
 router.get('/confirm/:token', authController.confirmEmail);
-router.post('/login', loginValidation, validateFields, authController.login);
+router.post('/login', authController.login);
 router.get('/logout', authController.logout);
 router.post('/2fa/setup', ensureAuthenticated, authController.setup2FA);
 router.post('/2fa/verify', ensureAuthenticated, authController.verify2FA);

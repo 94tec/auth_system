@@ -8,18 +8,18 @@ import logo from '../static/carZola.png';
 import '../App.css';
 
 const ChangePasswordForm = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [comfirmNewPassword, setComfirmNewPassword] = useState('');
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
+    if (newPassword !== comfirmNewPassword) {
       alert('Passwords do not match');
       return;
     }
     try {
-      await axios.post('http://localhost:5000/auth/reset-password', { password });
+      await axios.post('http://localhost:5000/auth/reset-password', { newPassword });
       dispatch(setMessageWithTimeout({ content: 'Password changed successfully! Please log in!', type: 'success' }));
     } catch (err) {
       console.error(err);
@@ -39,8 +39,8 @@ const ChangePasswordForm = () => {
           type="password"
           className="input-field"
           placeholder="Enter New Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
           required
         />
       </div>
@@ -51,8 +51,8 @@ const ChangePasswordForm = () => {
           type="password"
           className="input-field"
           placeholder="Confirm New Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          value={comfirmNewPassword}
+          onChange={(e) => setComfirmNewPassword(e.target.value)}
           required
         />
       </div>

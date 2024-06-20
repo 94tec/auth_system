@@ -8,6 +8,20 @@ import { loginSuccess, setMessageWithTimeout  } from '../store';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from React Router
 import '../App.css';
 
+const validateEmail = (email) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(String(email).toLowerCase());
+};
+
+const validatePassword = (password) => {
+  const minLength = 8;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasNumbers = /\d/.test(password);
+  const hasNonalphas = /\W/.test(password);
+  return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasNonalphas;
+};
+
 const AuthForm = ({ isLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,18 +33,32 @@ const AuthForm = ({ isLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isLogin) {
+      if (!validateEmail(email)) {
+        dispatch(setMessageWithTimeout({ content: 'Invalid email address format', type: 'error' }));
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        dispatch(setMessageWithTimeout({ content: 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters.', type: 'error' }));
+        return;
+      }
+
       try {
         const response = await axios.post('http://localhost:5000/auth/login', { email, password });
         const user = response.data.user;
         localStorage.setItem('token', response.data.token);
-        dispatch(loginSuccess(response.data.user));
+        dispatch(loginSuccess(user));
         dispatch(setMessageWithTimeout({ content: 'User Logged in Successfully!', type: 'success' }));
         console.log('User Logged in Successfully', user);
-       
       } catch (err) {
-        dispatch(setMessageWithTimeout({ content: 'Login Failed. Please try again.', type: 'error' }));
+        // Check if the error response is available
+        const errorMessage = err.response && err.response.data && err.response.data.errors
+        ? err.response.data.errors[0].msg
+        : 'Login Failed. Please try again.';
+        dispatch(setMessageWithTimeout({ content: errorMessage, type: 'error' }));
       }
-    } else {
+    }
+    else {
       if (password !== confirmPassword) {
         dispatch(setMessageWithTimeout({ content: 'Passwords do not match', type: 'error' }));
         return;
@@ -47,7 +75,10 @@ const AuthForm = ({ isLogin }) => {
         // Navigate to login page
         navigate('/login');
       } catch (err) {
-        dispatch(setMessageWithTimeout({ content: err, type: 'error' }));
+        const errorMessage = err.response && err.response.data && err.response.data.errors
+        ? err.response.data.errors[0].msg
+        : 'Registration Failed. Please try again or Contact Administrator.';
+        dispatch(setMessageWithTimeout({ content: errorMessage, type: 'error' }));
       }
     }
   };

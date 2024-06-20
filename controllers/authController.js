@@ -1,15 +1,20 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const passport = require('passport');
 const speakeasy = require('speakeasy');
 const nodemailer = require('nodemailer');
 
 const jwtUtils = require('../utils/jwtUtils');
 const dotenv = require('dotenv');
+const { registerSchema, loginSchema, resetPasswordSchema } = require('../validators/authValidators');
 
 dotenv.config();
 
 exports.register = async (req, res) => {
+  const { error } = registerSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({ errors: [{ msg: error.details[0].message }] });
+  }
   const { name, email, password } = req.body;
 
   try {
@@ -90,22 +95,40 @@ exports.confirmEmail = async (req, res) => {
   }
 };
 
-exports.login = (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      return res.status(500).send('Server Error');
-    }
+exports.login = async (req, res, next) => {
+  // Validate request body
+  const { error } = loginSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ errors: [{ msg: error.details[0].message }] });
+  }
+
+  const { email, password } = req.body;
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+
     if (!user) {
-      return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });
+      // No user found with the provided email
+      return res.status(400).json({ errors: [{ msg: 'Email not found' }] });
     }
-    req.login(user, { session: false }, async (err) => {
-      if (err) {
-        return res.status(500).send('Server Error');
-      }
-      const token = jwtUtils.signToken({ user: { id: user.id } }, process.env.JWT_SECRET, { expiresIn: 3600 });
-      res.status(200).json({ token, user, status: 'Logged  in Success' })
-    });
-  })(req, res, next);
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      // Passwords do not match
+      return res.status(400).json({ errors: [{ msg: 'Password incorrect! Please enter the correct password' }] });
+    }
+
+    // Passwords match, generate JWT token
+    const token = jwtUtils.signToken({ user: { id: user.id } }, process.env.JWT_SECRET, { expiresIn: 3600 });
+    // Respond with token, user details, and success status
+    res.status(200).json({ token, user, status: 'Logged in successfully' });
+
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ errors: [{ msg: 'Server Error' }] });
+  }
 };
 
 exports.logout = (req, res) => {
@@ -142,6 +165,11 @@ dotenv.config();
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
+
+  const { error } = Joi.object({ email: Joi.string().email().required() }).validate({ email });
+  if (error) {
+    return res.status(400).json({ errors: [{ msg: error.details[0].message }] });
+  }
 
   try {
     // Find user by email
@@ -184,6 +212,11 @@ exports.forgotPassword = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   const { token, newPassword } = req.body;
+
+  const { error } = resetPasswordSchema.validate({ token, newPassword });
+  if (error) {
+    return res.status(400).json({ errors: [{ msg: error.details[0].message }] });
+  }
 
   try {
     // Verify reset token
