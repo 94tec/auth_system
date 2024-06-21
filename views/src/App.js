@@ -8,7 +8,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPassword from './pages/ResetPassword';
 import ChangePassword from './pages/ChangePassword';
-import Message from './components/Message';
+import './static/AuthForm.css'; // Import the CSS for transitions
+import './static/Loading.css'; // Import the CSS for loading animation
 
 const App = () => {
 
@@ -17,7 +18,6 @@ const App = () => {
       <AuthProvider>
         <Router>
           <div className="App">
-            <Message />
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />

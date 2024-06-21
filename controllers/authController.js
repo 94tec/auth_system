@@ -2,6 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const speakeasy = require('speakeasy');
 const nodemailer = require('nodemailer');
+const Joi = require('joi');
 
 const jwtUtils = require('../utils/jwtUtils');
 const dotenv = require('dotenv');
@@ -27,6 +28,110 @@ exports.register = async (req, res) => {
     // Generate a unique confirmation token
     const token = jwtUtils.signToken({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+    // Create the confirmation link
+    const confirmationLink = `${process.env.BASE_URL}/confirm/${token}`;
+
+    // Prepare the HTML email content
+    const emailContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Confirmation</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #061d33;
+            margin: 0;
+            padding: 0;
+          }
+          .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: linear-gradient(to right, #072a46, #346fa5); 
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+          }
+          .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #dddddd;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #E0F2FF;
+          }
+          .header img {
+            max-width: 100px;
+            margin-bottom: 10px;
+            width: 40px;
+            height: 40px;
+          }
+          .content {
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;
+          }
+          .content p {
+            font-size: 16px;
+            color: #E0F2FF;
+            line-height: 1.5;
+          }
+          .content a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 4px;
+          }
+          .content a:hover {
+            background-color: #0056b3;
+          }
+          .footer {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999999;
+          }
+          .footer img {
+            max-width: 20px;
+            vertical-align: middle;
+          }
+          .footer a {
+            color: #999999;
+            text-decoration: none;
+          }
+          .footer a:hover {
+            text-decoration: underline;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <img src="https://img.icons8.com/?size=100&id=RLqfu7TfgR7I&format=png&color=000000" alt="Logo">
+            <h1>Confirm Your Account</h1>
+          </div>
+          <div class="content">
+            <p>Please click the link below to confirm your email address:</p>
+            <a href="${confirmationLink}">Confirm Account</a>
+          </div>
+          <div class="footer">
+            <p>If you didn't request this email, you can safely ignore it.</p>
+            <p>&copy; 2024 carZola Company. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
     // Prepare the confirmation email
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -40,7 +145,7 @@ exports.register = async (req, res) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Account Confirmation',
-      text: `Please confirm your account by clicking the following link: ${process.env.BASE_URL}/confirm/${token}`
+      html: emailContent,
     };
 
     // Send the confirmation email
@@ -85,9 +190,11 @@ exports.confirmEmail = async (req, res) => {
     const user = await User.findOneAndUpdate({ email }, { isConfirmed: true });
 
     if (!user) {
-      return res.status(400).json({ msg: 'Invalid token' });
+      return res.status(400).json({ errors: [{ msg: 'Invalid confirmation link' }] });
     }
 
+    // Redirect to the login page
+    res.redirect('http://localhost:3000/login');
     res.json({ msg: 'Email confirmed successfully' });
   } catch (err) {
     console.error(err.message);
@@ -180,6 +287,108 @@ exports.forgotPassword = async (req, res) => {
 
     // Generate reset token
     const token = jwtUtils.signToken({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // Create the confirmation link
+    const resetConfirmationLink = `${process.env.BASE_URL}/comfirm-reset-password/${token}`;
+    // Prepare the HTML email content
+    const emailContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Confirmation</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #061d33;
+            margin: 0;
+            padding: 0;
+          }
+          .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: linear-gradient(to right, #072a46, #346fa5); 
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+          }
+          .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #dddddd;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #E0F2FF;
+          }
+          .header img {
+            max-width: 100px;
+            margin-bottom: 10px;
+            width: 60px;
+            height: 60px;
+          }
+          .content {
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;
+          }
+          .content p {
+            font-size: 16px;
+            color: #E0F2FF;
+            line-height: 1.5;
+          }
+          .content a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 4px;
+          }
+          .content a:hover {
+            background-color: #0056b3;
+          }
+          .footer {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999999;
+          }
+          .footer img {
+            max-width: 20px;
+            vertical-align: middle;
+          }
+          .footer a {
+            color: #999999;
+            text-decoration: none;
+          }
+          .footer a:hover {
+            text-decoration: underline;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <img src="https://img.icons8.com/?size=100&id=63964&format=png&color=000000" alt="Logo">
+            <h1>Reset Your Account Password</h1>
+          </div>
+          <div class="content">
+            <p>Please click the link below to reset your account password:</p>
+            <a href="${resetConfirmationLink}">Change Password</a>
+          </div>
+          <div class="footer">
+            <p>If you didn't request this email, you can safely ignore it.</p>
+            <p>&copy; 2024 carZola Company. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
 
     // Prepare password reset email
     const transporter = nodemailer.createTransport({
@@ -194,7 +403,7 @@ exports.forgotPassword = async (req, res) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Password Reset Request',
-      text: `Please click the following link to reset your password: ${process.env.BASE_URL}/reset-password/${token}`
+      html: emailContent,
     };
 
     // Send password reset email
@@ -207,6 +416,38 @@ exports.forgotPassword = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: 'Server Error' });
+  }
+};
+exports.confirmResetPasswordEmail = async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    // Verify the confirmation token
+    const decoded = jwtUtils.verifyToken(token, process.env.JWT_SECRET);
+
+    if (!decoded || !decoded.email) {
+      console.error('Token verification failed or email not present in token.');
+      return res.status(400).json({ errors: [{ msg: 'Invalid confirmation link' }] });
+    }
+
+    const { email } = decoded;
+
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      console.error(`User not found for email: ${email}`);
+      return res.status(400).json({ errors: [{ msg: 'Invalid confirmation link' }] });
+    }
+
+    // Update the user confirmation status (assuming you have a field for that)
+    await User.updateOne({ email }, { passwordResetConfirmed: true });
+
+    // Redirect to the change-password page
+    return res.redirect('http://localhost:3000/change-password');
+  } catch (err) {
+    console.error('Server Error:', err.message);
+    res.status(500).send('Server Error');
   }
 };
 

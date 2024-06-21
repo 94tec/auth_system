@@ -1,34 +1,90 @@
-/* src/static/Message.css */
+/* src/static/MessageDisplay.css */
+.message-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .message {
-    position: fixed;
-    top: 30px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 10px 20px;
-    border-radius: 5px;
-    color: #fff;
-    font-size: 16px;
-    z-index: 1000;
-  }
-  
-  .message.success {
-    background-color: #4caf50;
-  }
-  
-  .message.error {
-    background-color: #f44336;
-  }
-  
-  .message.info {
-    background-color: #2196f3;
-  }
-  
-  .message .close-btn {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 20px;
-    margin-left: 10px;
-    cursor: pointer;
-  }
-  
+  margin: 10px;
+  padding: 15px;
+  border-radius: 5px;
+  color: #fff;
+  animation: fadein 0.5s, fadeout 0.5s 4.5s; /* Change timing as needed */
+  display: flex;
+  align-items: center;
+}
+
+.message.success {
+  border-color: #4caf50;
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.message.error {
+  border-color: #f44336;
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeout {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.messageContainer {
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sentMessage {
+  margin: 10px;
+  padding: 15px;
+  border-radius: 5px;
+  color: #fff;
+  animation: fadein 0.5s, fadeout 0.5s 4.5s; /* Change timing as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.sentMessage.success {
+  border-color: #4caf50;
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.sentMessage.error {
+  border-color: #f44336;
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.sentMessage .fa-envelope,
+.sentMessage .fa-check-circle {
+  margin: 0 10px;
+  font-size: 30px;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeout {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

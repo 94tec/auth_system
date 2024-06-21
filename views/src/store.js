@@ -25,41 +25,46 @@ export const { loginSuccess, logoutSuccess } = authSlice.actions;
 const messageSlice = createSlice({
   name: 'message',
   initialState: {
-    content: '',
-    type: '',
+    messages: [],
   },
   reducers: {
     setMessage(state, action) {
-      state.content = action.payload.content;
-      state.type = action.payload.type;
+      state.messages = [{ content: action.payload.content, type: action.payload.type, id: new Date().getTime() }];
     },
     clearMessage(state) {
-      state.content = '';
-      state.type = '';
+      state.messages = [];
+    },
+    setNewMessage(state, action) {
+      state.messages.push({ content: action.payload.content, type: action.payload.type, id: new Date().getTime() });
+    },
+    clearSpecificMessage(state, action) {
+      state.messages = state.messages.filter(message => message.id !== action.payload);
     },
   },
 });
 
-export const { setMessage, clearMessage } = messageSlice.actions;
+export const { setMessage, clearMessage, setNewMessage, clearSpecificMessage } = messageSlice.actions;
+
 // Async action to clear message after a delay
 export const setMessageWithTimeout = (message, timeout = 9000) => (dispatch) => {
-  dispatch(setMessage(message));
+  const id = new Date().getTime();
+  dispatch(setNewMessage({ ...message, id }));
 
   setTimeout(() => {
-    dispatch(clearMessage());
+    dispatch(clearSpecificMessage({ id }));
   }, timeout);
 };
-
 
 // Combine reducers
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
-  message: messageSlice.reducer, // Use messageSlice.reducer instead of messageSlice itself
+  message: messageSlice.reducer,
+  // Add additional reducers as needed
 });
 
 // Configure store
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: rootReducer
 });
 
 export default store;

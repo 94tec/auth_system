@@ -14,7 +14,7 @@ router.post('/2fa/verify', ensureAuthenticated, authController.verify2FA);
 
 // Route for requesting password reset
 router.post('/forgot-password', authController.forgotPassword);
-
+router.get('/comfirm-reset-password/:token', authController.confirmResetPasswordEmail);
 // Route for resetting password
 router.post('/reset-password', authController.resetPassword);
 

@@ -22,7 +22,7 @@
   width: 500px;
   height: auto;  
   position: relative;
-  background: linear-gradient(to right, #072a46, #346fa5);
+  background: linear-gradient(to right, #072a46, #346fa5); 
   border-radius: 0.4rem;
   overflow: hidden;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
@@ -32,6 +32,9 @@
   justify-content: center;
   padding: 20px;
   color: #E0F2FF;
+}
+.auth-form-container {
+  width: 100%;
 }
 
 /* Styling for the form logo */
@@ -50,15 +53,6 @@
   color: #111;
   font-weight: 800;
   font-family: 'Montserrat';
-}
-.message {
-  margin-top: 10px;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  color: #333;
-  text-align: center;
 }
 
 /* Button box styling */
@@ -215,7 +209,7 @@
   
   /* Reset password instructions styling */
   .instructions {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     font-weight: 700;
     color: #E0F2FF;
   }
@@ -241,6 +235,15 @@
     font-family: 'Montserrat';
     font-size: 22px;
   }
+  /* Reset password */
+.linkPass{
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}  
   
   /* Media queries for responsiveness */
   @media (max-width: 768px) {
@@ -333,5 +336,6 @@
     .form-heading, .form-heading-forgot-password {
       font-size: 18px;
     }
+    
   }
   

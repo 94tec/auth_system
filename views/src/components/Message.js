@@ -1,27 +1,27 @@
 // src/components/Message.js
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { clearMessage } from '../store';
-import '../static/Message.css'; 
+import { connect } from 'react-redux';
+import '../static/Message.css'; // Ensure you have this CSS file for styling
 
-const Message = () => {
-  const dispatch = useDispatch();
-  const message = useSelector((state) => state.message);
-
-  if (!message.content) {
+const Message = ({ messages }) => {
+  // Ensure messages is defined and is an array
+  if (!Array.isArray(messages)) {
     return null;
   }
 
-  const handleClose = () => {
-    dispatch(clearMessage());
-  };
-
   return (
-    <div className={`message ${message.type}`}>
-      <span>{message.content}</span>
-      <button onClick={handleClose} className="close-btn">&times;</button>
+    <div className="message-container">
+      {messages.map((message) => (
+        <div key={message.id} className={`message ${message.type}`}>
+          {message.content}
+        </div>
+      ))}
     </div>
   );
 };
 
-export default Message;
+const mapStateToProps = (state) => ({
+  messages: state.message.messages,
+});
+
+export default connect(mapStateToProps)(Message);
